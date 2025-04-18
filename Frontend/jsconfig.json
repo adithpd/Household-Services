@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "module": "es2022",
+    "moduleResolution": "Node",
+    "types": ["vite/client"]
+  },
+  "exclude": ["node_modules", "dist"]
+}

@@ -1,0 +1,301 @@
+openapi: 3.0.0
+info:
+  title: Admin Service API
+  description: API for managing services, service professionals, and customers.
+  version: 1.0.0
+paths:
+  /admin/create/service:
+    post:
+      summary: Create a new service
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description, currency, base_price, city, state, country]
+              properties:
+                description:
+                  type: string
+                currency:
+                  type: string
+                base_price:
+                  type: number
+                city:
+                  type: string
+                state:
+                  type: string
+                country:
+                  type: string
+      responses:
+        '200':
+          description: Service successfully created
+        '422':
+          description: Missing required fields
+
+  /admin/service-professional/verification/data:
+    get:
+      summary: Get service professional verification data
+      responses:
+        '200':
+          description: List of service professionals and their verification details
+
+  /admin/customer/data:
+    get:
+      summary: Get customer data
+      responses:
+        '200':
+          description: List of customers with their details
+
+  /admin/service-info/data:
+    get:
+      summary: Get all service information
+      responses:
+        '200':
+          description: List of all services
+
+  /admin/service-info/delete:
+    delete:
+      summary: Delete a service by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service_id]
+              properties:
+                service_id:
+                  type: string
+      responses:
+        '200':
+          description: Service deleted successfully
+        '400':
+          description: Service ID is required
+
+  /admin/service-info/edit:
+    patch:
+      summary: Edit service details
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [service_id]
+              properties:
+                service_id:
+                  type: string
+                description:
+                  type: string
+                currency:
+                  type: string
+                base_price:
+                  type: number
+      responses:
+        '200':
+          description: Service updated successfully
+        '404':
+          description: Service not found
+
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, name, email, password, role]
+              properties:
+                user_id:
+                  type: string
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+      responses:
+        '200':
+          description: Registration successful
+        '422':
+          description: Missing required fields
+        '409':
+          description: User ID or email already exists
+
+  /login:
+    post:
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, password]
+              properties:
+                user_id:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login successful, returns token
+        '401':
+          description: Invalid credentials
+
+  /logout:
+    post:
+      summary: User logout
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Logout successful
+        '403':
+          description: Token missing or invalidated
+
+  /protected:
+    get:
+      summary: Access protected resource
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Protected resource accessed
+        '403':
+          description: Token missing or invalid
+
+  /:
+    get:
+      summary: Root endpoint
+      responses:
+        '200':
+          description: Welcome message
+
+  /customer/register:
+    post:
+      summary: Register a new customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id, location, city, state, country, pincode, phone]
+              properties:
+                user_id:
+                  type: string
+                location:
+                  type: string
+                city:
+                  type: string
+                state:
+                  type: string
+                country:
+                  type: string
+                pincode:
+                  type: string
+                phone:
+                  type: string
+      responses:
+        '200':
+          description: Customer registered successfully
+        '409':
+          description: Customer already exists
+        '422':
+          description: Missing required fields
+
+  /customer/blocked:
+    get:
+      summary: Update customer blocked status
+      parameters:
+        - name: customer_id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: blocked
+          in: query
+          required: true
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Blocked status updated successfully
+        '404':
+          description: Customer not found
+
+  /customer/booking-info/view:
+    post:
+      summary: View customer booking information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id]
+              properties:
+                user_id:
+                  type: string
+      responses:
+        '200':
+          description: Booking information retrieved successfully
+        '404':
+          description: Customer not found
+
+  /customer/booking-info/view/completed:
+    post:
+      summary: View completed booking information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [user_id]
+              properties:
+                user_id:
+                  type: string
+      responses:
+        '200':
+          description: Completed booking information retrieved successfully
+        '404':
+          description: Customer not found
+
+  /customer/review-info/completed:
+    post:
+      summary: Mark review information as completed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [booking_id, service_professional_rating, review_provided, customer_remarks, paid_price, user_id]
+              properties:
+                booking_id:
+                  type: string
+                service_professional_rating:
+                  type: number
+                review_provided:
+                  type: string
+                customer_remarks:
+                  type: string
+                paid_price:
+                  type: number
+                user_id:
+                  type: string
+      responses:
+        '201':
+          description: Review submitted successfully
+        '404':
+          description: Customer not found
+        '422':
+          description: Missing required fields
+
